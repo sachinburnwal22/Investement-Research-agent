@@ -2,18 +2,28 @@ const YahooFinance = require("yahoo-finance2").default;
 const yahooFinance = new YahooFinance();
 
 async function getFinancialData(ticker) {
-  const quote = await yahooFinance.quote(ticker);
+  let quote = null;
+  try {
+    quote = await yahooFinance.quote(ticker);
+  } catch (error) {
+    console.warn(`[financeService] Failed to fetch quote for "${ticker}":`, error.message);
+  }
 
-  const summary = await yahooFinance.quoteSummary(ticker, {
-    modules: ["financialData", "defaultKeyStatistics"],
-  });
+  let summary = null;
+  try {
+    summary = await yahooFinance.quoteSummary(ticker, {
+      modules: ["financialData", "defaultKeyStatistics"],
+    });
+  } catch (error) {
+    console.warn(`[financeService] Failed to fetch quoteSummary for "${ticker}":`, error.message);
+  }
 
   return {
-    price: quote.regularMarketPrice,
-    marketCap: quote.marketCap,
-    revenue: summary.financialData.totalRevenue,
-    profitMargins: summary.financialData.profitMargins,
-    debtToEquity: summary.financialData.debtToEquity,
+    price: quote?.regularMarketPrice || null,
+    marketCap: quote?.marketCap || null,
+    revenue: summary?.financialData?.totalRevenue || null,
+    profitMargins: summary?.financialData?.profitMargins || null,
+    debtToEquity: summary?.financialData?.debtToEquity || null,
   };
 }
 
