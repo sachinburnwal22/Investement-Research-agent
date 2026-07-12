@@ -3,7 +3,11 @@ const { Annotation } = require("@langchain/langgraph");
 const InvestmentState = Annotation.Root({
   company: Annotation(),
 
+  symbol: Annotation(),
+
   research: Annotation(),
+
+  financialData: Annotation(),
 
   analysis: Annotation(),
 
